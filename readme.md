@@ -3,7 +3,7 @@
 ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logoColor=white) ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E) ![MQTT](https://img.shields.io/badge/MQTT-660066?style=for-the-badge&logo=mqtt&logoColor=white) ![CSS](https://img.shields.io/badge/css-663399?style=for-the-badge&logo=css&logoColor=white) ![HTML5](https://img.shields.io/badge/html-E34F26?style=for-the-badge&logo=html5&logoColor=white)
  
 
-> 🌐 **Language / Lingua:** 🇬🇧 **English** | 🇮🇹 [Italiano](README_IT.md)
+> 🌐 **Language / Lingua:** 🇬🇧 **English** | 🇮🇹 [Italiano](readme_IT.md)
 > 
 > 📖 For detailed setup guides, architecture diagrams, and API reference, see the **[Project Wiki](../../wiki)**.
  
