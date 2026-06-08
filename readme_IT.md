@@ -145,7 +145,7 @@ Configura le credenziali una volta sola:
 ```bash
 aws configure
 # AWS Access Key ID: <la tua chiave>
-# AWS Secret Access Key: <il tuo segreto>
+# AWS Secret Access Key: <la tua chiave segreta>
 # Default region: us-east-1
 ```
 
