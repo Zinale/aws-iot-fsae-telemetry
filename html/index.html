@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="static/img/scrittabianca-logofondobianco.ico">
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <link rel="stylesheet" href="static/css/style-v2.css">
+    <title>Telemetria</title>
+</head>
+<body>
+
+    <!-- ===== LOGIN OVERLAY ===== -->
+    <div id="login-overlay">
+        <img src="static/img/solo_logo.png" alt="Logo" class="logo-login">
+        <img src="static/img/lettering.png" alt="Logo" style="height: 80px; margin-bottom: 20px;">
+        <h2>Accesso Telemetria P.Elettrica</h2>
+        <input type="text" id="matricolaInput" placeholder="Inserisci Matricola (es. 1112222)">
+        <button id="loginBtn">Accedi</button>
+        <p id="loginError"></p>
+    </div>
+
+    <!-- ===== HEADER ===== -->
+    <header>
+        <div class="header-content">
+            <div class="header-brand">
+                <img src="static/img/lettering.png" alt="Polimarche" class="logo-header">
+                <span class="header-brand-divider">/</span>
+                <span class="header-brand-title">Peacock <span class="firma">Elettrica</span></span>
+            </div>
+            <div class="header-center">
+                <img src="static/img/solo_logo.png" alt="Logo" class="logo-center">
+            </div>
+            <div class="header-meta">
+                <div class="header-meta-item">
+                    <img src="static/img/icon-clock.svg" class="header-meta-icon" alt="">
+                    <span id="oraAttuale">--:--:--</span>
+                </div>
+                <span class="header-meta-sep">|</span>
+                <div class="header-meta-item">
+                    <img src="static/img/icon-calendar.svg" class="header-meta-icon" alt="">
+                    <span id="dataAttuale">--/--/----</span>
+                </div>
+                <span class="header-meta-sep">|</span>
+                <div class="header-meta-item header-status">
+                    <span class="status-dot offline" id="statusDot"></span>
+                    <span id="statusText">Offline</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main>
+
+        <!-- 3-column grid -->
+        <div class="dashboard-grid">
+
+            <!-- LEFT: Temperature e Inverter -->
+            <aside class="sidebar">
+                <h2 class="section-title">
+                    <img src="static/img/icon-thermometer.svg" class="section-icon" alt="">
+                    Temperatures
+                </h2>
+
+                <div class="data-block">
+                    <div class="data-block-icon">
+                        <img src="static/img/icon-engine.svg" alt="">
+                    </div>
+                    <div class="data-block-body">
+                        <span class="data-block-label">Temp Motor 1</span>
+                        <span class="data-block-value" id="tempMotore1">-- °C</span>
+                        <div class="data-block-bar"><div class="data-block-bar-fill" id="barMotore1"></div></div>
+                    </div>
+                </div>
+
+                <div class="data-block">
+                    <div class="data-block-icon">
+                        <img src="static/img/icon-engine.svg" alt="">
+                    </div>
+                    <div class="data-block-body">
+                        <span class="data-block-label">Temp Motor 2</span>
+                        <span class="data-block-value" id="tempMotore2">-- °C</span>
+                        <div class="data-block-bar"><div class="data-block-bar-fill" id="barMotore2"></div></div>
+                    </div>
+                </div>
+
+                <div class="data-block">
+                    <div class="data-block-icon">
+                        <img src="static/img/icon-inverter.svg" alt="">
+                    </div>
+                    <div class="data-block-body">
+                        <span class="data-block-label">Temp Inverter</span>
+                        <span class="data-block-value" id="tempInverter1">-- °C</span>
+                        <div class="data-block-bar"><div class="data-block-bar-fill" id="barInverter"></div></div>
+                    </div>
+                </div>
+
+                <div class="data-block">
+                    <div class="data-block-icon">
+                        <img src="static/img/icon-battery-temp.svg" alt="">
+                    </div>
+                    <div class="data-block-body">
+                        <span class="data-block-label">Temp Battery Pack</span>
+                        <span class="data-block-value" id="tempBatteryPack">-- °C</span>
+                        <div class="data-block-bar"><div class="data-block-bar-fill" id="barBattery"></div></div>
+                    </div>
+                </div>
+
+                <!-- Compatibilità script.js: tempInverter2 nascosto -->
+                <span id="tempInverter2" style="display:none"></span>
+            </aside>
+
+            <!-- CENTER: GPS Live -->
+            <section class="main-map-area">
+                <div class="map-header">
+                    <h2 class="section-title">
+                        <img src="static/img/icon-gps-pin.svg" class="section-icon" alt="">
+                        GPS Live
+                    </h2>
+                    <div class="live-badge" id="liveBadge">
+                        <span class="status-dot pulse" id="liveDot"></span>
+                        <span id="liveTxt">Live</span>
+                    </div>
+                </div>
+
+                <div id="mapid"></div>
+
+                <div class="gps-info-bar">
+                    <div class="gps-info-item">
+                        <img src="static/img/icon-crosshair.svg" class="gps-icon" alt="">
+                        <span class="gps-label">GPS Coordinates</span>
+                        <span class="gps-value" id="posGps">Lat: --, Lon: --</span>
+                    </div>
+                    <div class="gps-bar-sep"></div>
+                    <div class="gps-info-item">
+                        <img src="static/img/icon-speed.svg" class="gps-icon" alt="">
+                        <span class="gps-label">Speed</span>
+                        <span class="gps-value" id="velocitaVal">-- km/h</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT: Battery / BMS -->
+            <aside class="sidebar">
+                <h2 class="section-title">
+                    <img src="static/img/icon-battery.svg" class="section-icon" alt="">
+                    Battery / BMS
+                </h2>
+
+                <div class="data-block">
+                    <div class="data-block-icon">
+                        <img src="static/img/icon-voltage.svg" alt="">
+                    </div>
+                    <div class="data-block-body">
+                        <span class="data-block-label">Battery Pack Voltage</span>
+                        <span class="data-block-value" id="voltageModuli">-- V</span>
+                    </div>
+                </div>
+
+                <div class="data-block">
+                    <div class="data-block-icon">
+                        <img src="static/img/icon-lv.svg" alt="">
+                    </div>
+                    <div class="data-block-body">
+                        <span class="data-block-label">LV Voltage</span>
+                        <span class="data-block-value" id="voltageBatteryLV">-- V</span>
+                    </div>
+                </div>
+
+                <div class="data-block">
+                    <div class="data-block-icon">
+                        <img src="static/img/icon-soc.svg" alt="">
+                    </div>
+                    <div class="data-block-body">
+                        <span class="data-block-label">SoC</span>
+                        <span class="data-block-value" id="percentualeCarica">-- %</span>
+                    </div>
+                </div>
+
+                <div class="data-block">
+                    <div class="data-block-icon">
+                        <img src="static/img/icon-current.svg" alt="">
+                    </div>
+                    <div class="data-block-body">
+                        <span class="data-block-label">BMS Current</span>
+                        <span class="data-block-value" id="currentBMS">-- A</span>
+                    </div>
+                </div>
+
+            </aside>
+        </div><!-- end .dashboard-grid -->
+
+        <!-- BOTTOM: Diagnostica di Sistema -->
+        <section class="diagnostica-section">
+            <h2 class="section-title">
+                <img src="static/img/icon-diagnostic.svg" class="section-icon" alt="">
+                 System Diagnostics
+            </h2>
+            <div class="diagnostica-grid">
+                <div class="diag-tile" id="diag-inv1">
+                    <span class="diag-label">Inv1 Error</span>
+                    <div class="diag-status"><span class="status-dot"></span><span>OK</span></div>
+                </div>
+                <div class="diag-tile" id="diag-inv2">
+                    <span class="diag-label">Inv2 Error</span>
+                    <div class="diag-status"><span class="status-dot"></span><span>OK</span></div>
+                </div>
+                <div class="diag-tile" id="diag-apps">
+                    <span class="diag-label">APPs Implausibility</span>
+                    <div class="diag-status"><span class="status-dot"></span><span>OK</span></div>
+                </div>
+                <div class="diag-tile" id="diag-overcurrent">
+                    <span class="diag-label">Pack Overcurrent</span>
+                    <div class="diag-status"><span class="status-dot"></span><span>OK</span></div>
+                </div>
+                <div class="diag-tile" id="diag-overvoltage">
+                    <span class="diag-label">Pack OverVoltage</span>
+                    <div class="diag-status"><span class="status-dot"></span><span>OK</span></div>
+                </div>
+                <div class="diag-tile" id="diag-cell-ow">
+                    <span class="diag-label">Cell OpenWire</span>
+                    <div class="diag-status"><span class="status-dot"></span><span>OK</span></div>
+                </div>
+                <div class="diag-tile" id="diag-temp-ow">
+                    <span class="diag-label">Temp OpenWire</span>
+                    <div class="diag-status"><span class="status-dot"></span><span>OK</span></div>
+                </div>
+                <div class="diag-tile" id="diag-curr-sensor">
+                    <span class="diag-label">Current Sensor Disconnected</span>
+                    <div class="diag-status"><span class="status-dot"></span><span>OK</span></div>
+                </div>
+                <div class="diag-tile" id="diag-slave-sensor">
+                    <span class="diag-label">Slave Sensor Disconnected</span>
+                    <div class="diag-status"><span class="status-dot"></span><span>OK</span></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; Polimarche Racing Team 2025-26</p>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="static/js/script.js"></script>
+    <script>
+        // Orologio e data in tempo reale
+        function updateClock() {
+            const now = new Date();
+            const t = document.getElementById('oraAttuale');
+            const d = document.getElementById('dataAttuale');
+            if (t) t.textContent = now.toLocaleTimeString('it-IT');
+            if (d) d.textContent = now.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
+
+</body>
+</html>

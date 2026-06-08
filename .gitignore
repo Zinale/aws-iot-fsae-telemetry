@@ -1,0 +1,15 @@
+certs/*.pem.crt
+certs/*.pem.key
+certs/*.pem
+!certs/.gitkeep
+tools/dynamo-team-members-pE-admin_accessKeys.csv
+appunti.txt
+
+config.py
+
+tools/elettronics.csv
+.vscode/
+
+
+/examples
+IoT-Core-AWS-test.py

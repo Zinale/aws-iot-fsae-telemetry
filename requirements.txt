@@ -1,0 +1,9 @@
+boto3==1.43.21
+botocore==1.43.21
+jmespath==1.1.0
+paho-mqtt==2.1.0
+pyserial==3.5
+python-dateutil==2.9.0.post0
+s3transfer==0.18.0
+six==1.17.0
+urllib3==2.7.0
