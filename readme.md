@@ -203,7 +203,9 @@ The live instance is available at: **[livedata.polimarcheracingteam.com](https:/
 
 - [aws-samples/aws-iot-wss-ts-client](https://github.com/aws-samples/aws-iot-wss-ts-client) - Reference TypeScript client for AWS IoT Core over WebSockets (SigV4), used as a starting point for the browser-side MQTT connection.
 - [AWS IoT Core Developer Guide](https://docs.aws.amazon.com/iot/latest/developerguide/what-is-aws-iot.html) - Official documentation for MQTT, X.509 certificates, and IoT policies.
-- [AWS Signature Version 4 signing process](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html) - Reference for the HMAC-SHA256 key derivation chain implemented in the Lambda.
+- [AWS Signature Version 4 General](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html) - Reference for the HMAC-SHA256 key derivation chain implemented in the Lambda.
+- [Create a signed AWS API request](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_sigv-create-signed-request.html#signature-v4-example)
+- [AWS V4 signing example in python](https://gist.github.com/kn9ts/4b5a9942b6afbfc2534f2f14c87b9b54) - Reference example for encryption using SigV4 in Python.
 - [AWS Boto3](https://docs.aws.amazon.com/boto3/latest/) - AWS Python SDK
 - [Leaflet.js](https://leafletjs.com/) - Open-source JavaScript library for interactive maps.
 - [MQTT.js](https://github.com/mqttjs/MQTT.js) - MQTT client library used in the browser dashboard.
