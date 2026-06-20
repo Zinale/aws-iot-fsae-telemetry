@@ -26,8 +26,10 @@ def lambda_handler(event, context):
             body = event
             
         matricola = body.get('matricola')
+        print(f"Tentativo di accesso con matricola: {matricola}")
 
         if not matricola:
+            print("Richiesta respinta: matricola vuota.")
             return response(400, "Errore: Inserire una matricola UNIVPM.")
 
         # Controlla la matricola in DynamoDB
@@ -35,6 +37,7 @@ def lambda_handler(event, context):
         db_response = table.get_item(Key={'matricola': matricola})
 
         if 'Item' not in db_response:
+            print(f"Accesso negato: la matricola {matricola} non è nel database.")
             return response(403, "Accesso negato: Matricola non autorizzata dal team.", request_origin)
 
         # Usa le credenziali del ruolo della Lambda 
@@ -50,6 +53,7 @@ def lambda_handler(event, context):
             token=creds.token
         )
 
+        print(f"Accesso consentito per {matricola}. URL generato con successo.")
         return response(200, {"url": ws_url}, request_origin)
 
     except Exception as e:

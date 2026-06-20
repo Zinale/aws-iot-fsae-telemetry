@@ -82,7 +82,7 @@ def parse_frame(line: str) -> tuple[str, dict] | None:
     try:
         values = [t(v) for t, v in zip(schema["types"], payload_parts)]
     except ValueError as e:
-        print(f"[parser] tipo {msg_type}: conversione fallita — {e}")
+        print(f"[parser] tipo {msg_type}: conversione fallita - {e}")
         return None
 
     data = dict(zip(schema["fields"], values))
@@ -120,11 +120,11 @@ def random_producer(q: queue.Queue):
             topic, data = result
             try:
                 q.put((topic, data), timeout=2)
-                print(f"[random_producer] #{i} tipo={msg_type} → {topic}")
+                print(f"[random_producer] #{i} tipo={msg_type} -> {topic}")
             except queue.Full:
-                print(f"[random_producer] #{i} SCARTATO — coda piena")
+                print(f"[random_producer] #{i} SCARTATO - coda piena")
         i += 1
-        time.sleep(1)
+        time.sleep(0.5)
     print("[random_producer] uscita")
 
 
@@ -164,7 +164,7 @@ def serial_producer(q: queue.Queue, port: str, baud: int):
         try:
             q.put((topic, data), timeout=2)
         except queue.Full:
-            print("[serial_producer] SCARTATO — coda piena")
+            print("[serial_producer] SCARTATO - coda piena")
 
     ser.close()
     print("[serial_producer] uscita")
@@ -187,7 +187,7 @@ def mqtt_publisher(q: queue.Queue, client: paho.Client):
         if result.rc != paho.MQTT_ERR_SUCCESS:
             print(f"[mqtt_publisher] #{i} errore publish rc={result.rc}")
         else:
-            print(f"[mqtt_publisher] #{i} → {topic}: {data}")
+            print(f"[mqtt_publisher] #{i} -> {topic}: {data}")
         q.task_done()
     print("[mqtt_publisher] uscita")
 
